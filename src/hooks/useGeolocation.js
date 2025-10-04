@@ -28,14 +28,10 @@ export function useGeolocation() {
 
   const reverseGeocode = async (latitude, longitude) => {
     try {
-      const response = await axios.get(`${nominatimBaseUrl}/reverse`, {
-        params: {
-          lat: latitude,
-          lon: longitude,
-          format: 'json',
-          addressdetails: 1,
-          'accept-language': 'en',
-        },
+      // Use a CORS proxy to avoid browser CORS restrictions
+      const proxyUrl = 'https://corsproxy.io/?'
+      const targetUrl = `${nominatimBaseUrl}/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&accept-language=en`
+      const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl), {
         headers: {
           'User-Agent': 'AttendanceApp/1.0',
           'Accept': 'application/json',
