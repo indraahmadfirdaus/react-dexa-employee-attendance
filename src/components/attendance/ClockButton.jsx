@@ -35,14 +35,7 @@ export default function ClockButton({ attendance, notes, clockInNotes, clockOutN
         id: toastId,
         description: 'Have a productive day!',
       })
-
-      // Confetti animation
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-
+      
       // Refresh today's attendance via React Query
       queryClient.invalidateQueries({ queryKey: ['attendance', 'today'] })
 
@@ -108,8 +101,8 @@ export default function ClockButton({ attendance, notes, clockInNotes, clockOutN
         disabled={loading}
         className={`w-full h-16 text-lg font-semibold rounded-2xl shadow-lg transition-all ${
           isClockedIn
-            ? 'bg-red-500 hover:bg-red-600'
-            : 'bg-primary hover:bg-primary/90'
+            ? 'bg-red-500 hover:bg-red-600 text-white'
+            : 'bg-primary hover:bg-primary/90 dark:bg-white dark:text-black dark:hover:bg-neutral-200'
         }`}
       >
         {loading ? (

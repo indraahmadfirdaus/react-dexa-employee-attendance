@@ -9,7 +9,7 @@ export default function BottomNav() {
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-800 border-t border-gray-200 dark:border-neutral-700 px-6 py-4">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {links.map(({ to, icon: Icon, label }) => (
           <NavLink
@@ -17,7 +17,7 @@ export default function BottomNav() {
             to={to}
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 transition-colors ${
-                isActive ? 'text-primary-600' : 'text-gray-400'
+                isActive ? 'text-primary-600 dark:text-primary-300' : 'text-gray-400 dark:text-gray-300'
               }`
             }
           >
