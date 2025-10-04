@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { format as formatDateFns } from 'date-fns'
 import { api } from '@/lib/api'
 import { formatDate, formatTime } from '@/utils/format'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -35,10 +36,10 @@ export default function SummaryPage() {
     setRecords(data?.rows ?? [])
   }, [data, isError, queryError])
 
-  const toIsoDate = (d) => (d ? new Date(d).toISOString().slice(0, 10) : '')
+  const toQueryDate = (d) => (d instanceof Date ? formatDateFns(d, 'yyyy-MM-dd') : '')
 
   const handleDateChange = (key) => (date) => {
-    const value = toIsoDate(date)
+    const value = toQueryDate(date)
     setFilters((f) => ({ ...f, [key]: value }))
   }
 
@@ -61,7 +62,7 @@ export default function SummaryPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="sticky top-0 z-20 bg-white/80 dark:bg-neutral-900/80  supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-neutral-900/60 border-b border-gray-100 dark:border-gray-800 px-1 py-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Summary</h1>
         <div className="text-xs text-gray-500 flex items-center gap-1">
           <CalendarDays className="h-4 w-4" />
@@ -90,7 +91,7 @@ export default function SummaryPage() {
             buttonClassName="h-8 px-3 text-sm"
             labelClassName="text-xs"
           />
-          <Button onClick={applyFilters} className="cursor-pointer px-4 bg-black hover:bg-gray-800 text-white rounded-xl">Apply</Button>
+          <Button onClick={applyFilters} className="cursor-pointer px-4 bg-black hover:bg-gray-800 text-white rounded-xl dark:bg-white dark:text-black dark:hover:bg-neutral-200">Apply</Button>
           <Button variant="outline" onClick={clearFilters} className="cursor-pointer px-3 rounded-lg text-sm whitespace-nowrap">Reset</Button>
         </div>
       </div>
@@ -119,28 +120,28 @@ export default function SummaryPage() {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-xl border border-gray-200 p-3">
-                  <div className="flex items-center gap-2 text-gray-700 mb-1">
+                <div className="rounded-xl border border-gray-200 dark:border-white/10 p-3">
+                  <div className="flex items-center gap-2 text-gray-700 dark:text-neutral-200 mb-1">
                     <LogIn className="h-4 w-4" />
                     <span className="text-sm font-medium">Clock In</span>
                   </div>
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-gray-900 dark:text-neutral-100">
                     {r.clockIn ? formatTime(r.clockIn) : '—'}
                   </div>
-                  <div className="mt-1 text-xs text-gray-500 line-clamp-2 flex items-start gap-1">
+                  <div className="mt-1 text-xs text-gray-500 dark:text-neutral-300 line-clamp-2 flex items-start gap-1">
                     <MapPin className="h-3 w-3 mt-[2px]" />
                     <span>{r.clockInAddress || '—'}</span>
                   </div>
                 </div>
-                <div className="rounded-xl border border-gray-200 p-3">
-                  <div className="flex items-center gap-2 text-gray-700 mb-1">
+                <div className="rounded-xl border border-gray-200 dark:border-white/10 p-3">
+                  <div className="flex items-center gap-2 text-gray-700 dark:text-neutral-200 mb-1">
                     <LogOut className="h-4 w-4" />
                     <span className="text-sm font-medium">Clock Out</span>
                   </div>
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-gray-900 dark:text-neutral-100">
                     {r.clockOut ? formatTime(r.clockOut) : '—'}
                   </div>
-                  <div className="mt-1 text-xs text-gray-500 line-clamp-2 flex items-start gap-1">
+                  <div className="mt-1 text-xs text-gray-500 dark:text-neutral-300 line-clamp-2 flex items-start gap-1">
                     <MapPin className="h-3 w-3 mt-[2px]" />
                     <span>{r.clockOutAddress || '—'}</span>
                   </div>

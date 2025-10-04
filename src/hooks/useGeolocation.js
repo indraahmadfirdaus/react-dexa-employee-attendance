@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { useLocationStore } from '../store/location/locationStore'
 
 export function useGeolocation() {
@@ -22,22 +23,50 @@ export function useGeolocation() {
     }
   }
 
+  const nominatimBaseUrl = 'https://nominatim.openstreetmap.org'
+  const fallbackBaseUrl = 'https://geocode.maps.co'
+
   const reverseGeocode = async (latitude, longitude) => {
     try {
-      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`
-      const response = await fetch(url, {
+      const response = await axios.get(`${nominatimBaseUrl}/reverse`, {
+        params: {
+          lat: latitude,
+          lon: longitude,
+          format: 'json',
+          addressdetails: 1,
+          'accept-language': 'en',
+        },
         headers: {
+          'User-Agent': 'AttendanceApp/1.0',
           'Accept': 'application/json',
         },
+        timeout: 5000,
       })
-      if (!response.ok) throw new Error('Reverse geocoding failed')
-      const data = await response.json()
+      const data = response?.data ?? {}
       const address = data.display_name || null
       const addressDetails = data.address || null
       return { address, addressDetails, raw: data }
     } catch (err) {
-      setError('Reverse geocoding failed')
-      return { address: null, addressDetails: null, raw: null }
+      // Fallback to geocode.maps.co if Nominatim rejects (e.g., 403) or times out
+      try {
+        const fb = await axios.get(`${fallbackBaseUrl}/reverse`, {
+          params: {
+            lat: latitude,
+            lon: longitude,
+          },
+          headers: {
+            'Accept': 'application/json',
+          },
+          timeout: 5000,
+        })
+        const data = fb?.data ?? {}
+        const address = data.display_name || null
+        const addressDetails = data.address || null
+        return { address, addressDetails, raw: data }
+      } catch (_) {
+        setError('Reverse geocoding failed')
+        return { address: null, addressDetails: null, raw: null }
+      }
     }
   }
 

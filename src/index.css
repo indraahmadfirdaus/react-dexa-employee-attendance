@@ -13,6 +13,9 @@
   body {
     @apply bg-gray-50 text-gray-900;
   }
+  .dark body {
+    @apply bg-neutral-900 text-neutral-100;
+  }
 }
 
 @theme inline {
@@ -161,7 +164,7 @@
 
   --foreground: oklch(0.984 0.003 247.858);
 
-  --card: oklch(0.208 0.042 265.755);
+  --card: oklch(0.20 0 0);
 
   --card-foreground: oklch(0.984 0.003 247.858);
 
@@ -226,5 +229,39 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* react-day-picker overrides */
+@layer components {
+  .rdp {
+    @apply rounded-xl bg-white text-gray-900;
+  }
+  .dark .rdp {
+    @apply bg-neutral-900 text-neutral-100;
+  }
+  .rdp-caption_label {
+    @apply text-gray-700 dark:text-neutral-200 font-medium;
+  }
+  .rdp-nav_button {
+    @apply text-gray-700 dark:text-neutral-200 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800;
+  }
+  .rdp-weekday {
+    @apply text-gray-500 dark:text-neutral-300;
+  }
+  .rdp-day {
+    @apply text-gray-900 dark:text-neutral-100 rounded-md;
+  }
+  .rdp-day:hover:not(.rdp-day_disabled) {
+    @apply bg-gray-100 dark:bg-neutral-800;
+  }
+  .rdp-day_selected, .rdp-day_selected:focus-visible {
+    @apply bg-neutral-700 text-white dark:bg-neutral-700 dark:text-white;
+  }
+  .rdp-day_outside {
+    @apply text-gray-400 dark:text-neutral-500;
+  }
+  .rdp-button {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md;
   }
 }

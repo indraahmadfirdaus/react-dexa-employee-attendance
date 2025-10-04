@@ -3,6 +3,7 @@ import { useGeolocation } from '@/hooks/useGeolocation'
 import { useTodayAttendance } from '@/hooks/useAttendance'
 import { useLocationStore } from '@/store/location/locationStore'
 import AnalogClock from '@/components/attendance/AnalogClock'
+import ThemeToggle from '@/components/ui/theme-toggle'
 import ClockButton from '@/components/attendance/ClockButton'
 import LocationPermissionDialog from '@/components/attendance/LocationPermissionDialog'
 import { formatDate } from '@/utils/format'
@@ -16,7 +17,7 @@ export default function AttendancePage() {
   const permissionCheckedRef = useRef(false)
   
   const { hasPermission, location } = useLocationStore()
-  const { requestPermission } = useGeolocation()
+  const { requestPermission, getCurrentLocation } = useGeolocation()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -30,11 +31,18 @@ export default function AttendancePage() {
     permissionCheckedRef.current = true
 
     const checkPermission = async () => {
-      await requestPermission()
+      const granted = await requestPermission()
+      if (granted) {
+        try {
+          await getCurrentLocation()
+        } catch (_) {
+          // location errors handled inside hook
+        }
+      }
       setLoading(false)
     }
     checkPermission()
-  }, [requestPermission])
+  }, [requestPermission, getCurrentLocation])
 
   const { data: todayAttendance, isLoading: todayLoading, error: todayError } = useTodayAttendance({
     onError: (error) => {
@@ -51,16 +59,20 @@ export default function AttendancePage() {
   }
 
   useEffect(() => {
-    if (hasPermission && location) {
-      const addr = truncate(location.address)
-      if (addr) {
-        setLocationText(addr)
-      } else {
-        setLocationText(`${Number(location.latitude).toFixed(4)}, ${Number(location.longitude).toFixed(4)}`)
-      }
-    } else {
+    if (!hasPermission) {
       setLocationText('Please allow permission for location info')
+      return
     }
+    if (hasPermission && !location) {
+      setLocationText('Locating…')
+      return
+    }
+    const addr = truncate(location?.address)
+    const lat = Number(location?.latitude)
+    const lon = Number(location?.longitude)
+    const hasCoords = Number.isFinite(lat) && Number.isFinite(lon)
+    const coordsText = hasCoords ? `${lat.toFixed(4)}, ${lon.toFixed(4)}` : null
+    setLocationText(addr || coordsText || 'Location unavailable')
   }, [hasPermission, location])
   const clockInNotes = ''
   const clockOutNotes = ''
@@ -69,14 +81,15 @@ export default function AttendancePage() {
     <div className="min-h-[calc(100vh-120px)] flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2 text-primary">
-          <MapPin size={20} />
+        <div className="flex items-center gap-2 text-gray-700 dark:text-neutral-200">
+          <MapPin size={20} className="" />
           <span className="text-sm font-medium">{locationText}</span>
         </div>
+        <ThemeToggle />
       </div>
 
       <div className="text-center mb-2">
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 dark:text-gray-300 text-sm">
           {formatDate(currentTime)}
         </p>
       </div>
@@ -86,7 +99,7 @@ export default function AttendancePage() {
       </div>
 
       <div className="text-center mb-8">
-        <div className="text-4xl font-bold text-gray-900 mb-1">
+        <div className="text-4xl font-bold text-gray-900 dark:text-neutral-100 mb-1">
           {currentTime.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
@@ -106,7 +119,7 @@ export default function AttendancePage() {
       />
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-300">
           Status: {todayAttendance?.clockOut ? (
             <span className="text-black-800 font-medium">Clocked Out</span>
           ) : todayAttendance?.clockIn ? (

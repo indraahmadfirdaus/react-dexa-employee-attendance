@@ -17,7 +17,7 @@ export function PopoverContent({ className = '', children, ...props }) {
   return (
     <PopoverPrimitive.Content
       sideOffset={4}
-      className={`z-50 rounded-xl border bg-white p-2 shadow-lg ${className}`}
+      className={`z-50 rounded-xl border bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-100 border-gray-200 dark:border-white/10 p-2 shadow-lg ${className}`}
       {...props}
     >
       {children}

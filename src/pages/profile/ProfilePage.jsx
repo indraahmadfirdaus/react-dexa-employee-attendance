@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Mail, Phone, Briefcase, CalendarDays, RefreshCw, LogOut } from 'lucide-react'
+import { Mail, Phone, Briefcase, CalendarDays, Pencil, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth/authStore'
 import { api } from '@/lib/api'
@@ -115,7 +115,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-[calc(100vh-120px)]">
-      {/* Geometric hero inspired by Login, tuned to green */}
       <div className="relative h-40 bg-black rounded-t-3xl overflow-hidden mb-6">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-4 left-4 w-12 h-12 border-4 border-white transform rotate-45" />
@@ -131,7 +130,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile card */}
-      <Card className="bg-white rounded-b-3xl shadow-xl">
+      <Card className="bg-white dark:bg-neutral-900 rounded-b-3xl shadow-xl">
         <CardHeader className="flex items-center gap-4">
           {photoUrl ? (
             <img
@@ -145,10 +144,10 @@ export default function ProfilePage() {
             </div>
           )}
           <div className="flex-1 text-center">
-            <CardTitle className="text-xl">{name}</CardTitle>
-            <CardDescription className="text-sm">{position}</CardDescription>
+            <CardTitle className="text-xl dark:text-neutral-100">{name}</CardTitle>
+            <CardDescription className="text-sm dark:text-neutral-300">{position}</CardDescription>
             <div className="mt-2">
-              <span className="inline-flex items-center rounded-full bg-green-50 text-green-700 text-xs font-medium px-2 py-1 border border-green-200">
+              <span className="inline-flex items-center rounded-full bg-green-50 text-green-700 text-xs font-medium px-2 py-1 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800">
                 {role}
               </span>
             </div>
@@ -166,18 +165,19 @@ export default function ProfilePage() {
             <div className="text-center text-xs text-gray-500">Loading profile…</div>
           )}
 
+
           <div className="mt-2 flex items-center justify-between gap-3">
             <Button
               variant="outline"
-              onClick={handleRefresh}
+              onClick={() => navigate('/profile/update')}
               className="flex-1 h-10 rounded-xl flex items-center justify-center gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
               <span>Update Profile</span>
             </Button>
             <Button
               onClick={handleLogout}
-              className="flex-1 h-10 rounded-xl border bg-red-500 hover:bg-red-600 flex items-center justify-center gap-2"
+              className="flex-1 h-10 rounded-xl border bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-2"
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
@@ -191,11 +191,11 @@ export default function ProfilePage() {
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
-      <Icon className="h-4 w-4 text-gray-600" />
+    <div className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-white/10 p-3">
+      <Icon className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
       <div className="flex-1">
-        <div className="text-xs text-gray-500">{label}</div>
-        <div className="text-sm font-medium text-gray-900">{value || '—'}</div>
+        <div className="text-xs text-gray-500 dark:text-neutral-400">{label}</div>
+        <div className="text-sm font-medium text-gray-900 dark:text-neutral-100">{value || '—'}</div>
       </div>
     </div>
   )
@@ -204,10 +204,10 @@ function InfoRow({ icon: Icon, label, value }) {
 function MetaRow({ icon: Icon, label, value }) {
   return (
     <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
-      <Icon className="h-4 w-4 text-gray-600" />
+      <Icon className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
       <div className="flex-1">
-        <div className="text-xs text-gray-500">{label}</div>
-        <div className="text-sm font-medium text-gray-900">{value}</div>
+        <div className="text-xs text-gray-500 dark:text-neutral-400">{label}</div>
+        <div className="text-sm font-medium text-gray-900 dark:text-neutral-100">{value}</div>
       </div>
     </div>
   )
