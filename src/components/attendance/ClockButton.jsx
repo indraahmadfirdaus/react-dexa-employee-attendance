@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { api } from '@/lib/api'
 import { toast } from 'sonner'
-import confetti from 'canvas-confetti'
 import { useQueryClient } from '@tanstack/react-query'
 
 export default function ClockButton({ attendance, notes, clockInNotes, clockOutNotes }) {
