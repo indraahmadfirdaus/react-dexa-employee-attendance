@@ -2,6 +2,26 @@
 
 A modern employee attendance application built with React and Vite. It features a themed UI, geolocation-powered clock-in/out, and real-time notifications via WebSocket.
 
+## Live Preview
+- https://dexa-employee-app.netlify.app/
+
+## Table of Contents
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+  - [Development](#development)
+  - [Build and Preview](#build-and-preview)
+- [UI Theme and Colors](#ui-theme-and-colors)
+- [API Client](#api-client)
+- [Geolocation](#geolocation)
+- [Project Structure (high level)](#project-structure-high-level)
+- [Scripts](#scripts)
+- [Deployment](#deployment)
+- [License](#license)
+
 ## Key Features
 - Authentication with token persistence and secure Axios interceptor
 - Attendance clock-in/out with browser geolocation and reverse geocoding (OpenStreetMap, graceful fallback)
