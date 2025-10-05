@@ -1,11 +1,10 @@
 # Dexa Employee Attendance (React + Vite)
 
-A modern employee attendance application built with React and Vite. It features a themed UI, geolocation-powered clock-in/out, and real-time notifications via WebSocket.
+A modern employee attendance application built with React and Vite. It features a themed UI, geolocation-powered clock-in/out.
 
 ## Key Features
 - Authentication with token persistence and secure Axios interceptor
-- Attendance clock-in/out with browser geolocation and reverse geocoding (OpenStreetMap, graceful fallback)
-- Real-time notifications using WebSocket (socket.io-client)
+- Attendance clock-in/out with browser geolocation and reverse geocoding
 - Data fetching and caching with TanStack React Query
 - Theming with next-themes (class-based dark mode) and Tailwind CSS v4
 - Color system using CSS variables (OKLCH tokens) for consistent theming

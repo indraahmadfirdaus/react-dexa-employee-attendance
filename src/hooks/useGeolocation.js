@@ -23,47 +23,28 @@ export function useGeolocation() {
     }
   }
 
-  const nominatimBaseUrl = 'https://nominatim.openstreetmap.org'
   const fallbackBaseUrl = 'https://geocode.maps.co'
 
   const reverseGeocode = async (latitude, longitude) => {
     try {
-      // Use a CORS proxy to avoid browser CORS restrictions
-      const proxyUrl = 'https://corsproxy.io/?'
-      const targetUrl = `${nominatimBaseUrl}/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&accept-language=en`
-      const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl), {
+      const fb = await axios.get(`${fallbackBaseUrl}/reverse`, {
+        params: {
+          lat: latitude,
+          lon: longitude,
+        },
         headers: {
-          'User-Agent': 'AttendanceApp/1.0',
           'Accept': 'application/json',
         },
         timeout: 5000,
       })
-      const data = response?.data ?? {}
+      const data = fb?.data ?? {}
       const address = data.display_name || null
       const addressDetails = data.address || null
       return { address, addressDetails, raw: data }
-    } catch (err) {
-      // Fallback to geocode.maps.co if Nominatim rejects (e.g., 403) or times out
-      try {
-        const fb = await axios.get(`${fallbackBaseUrl}/reverse`, {
-          params: {
-            lat: latitude,
-            lon: longitude,
-          },
-          headers: {
-            'Accept': 'application/json',
-          },
-          timeout: 5000,
-        })
-        const data = fb?.data ?? {}
-        const address = data.display_name || null
-        const addressDetails = data.address || null
-        return { address, addressDetails, raw: data }
-      } catch (_) {
+    } catch (_) {
         setError('Reverse geocoding failed')
         return { address: null, addressDetails: null, raw: null }
       }
-    }
   }
 
   const getCurrentLocation = () => {
@@ -78,7 +59,7 @@ export function useGeolocation() {
             accuracy: position.coords.accuracy,
           }
 
-          // Attempt reverse geocoding with OpenStreetMap (Nominatim)
+          // Attempt reverse geocoding (primary: geocode.maps.co, fallback: Nominatim)
           let enrichedLocation = baseLocation
           try {
             const rg = await reverseGeocode(baseLocation.latitude, baseLocation.longitude)
