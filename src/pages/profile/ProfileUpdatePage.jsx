@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Phone, Upload, Save, ArrowLeft } from 'lucide-react'
+import { Phone, Upload, Save, ArrowLeft, Lock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth/authStore'
 import { api } from '@/lib/api'
+import { authService } from '@/services/authService'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +22,10 @@ export default function ProfileUpdatePage() {
   const [uploading, setUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [changingPassword, setChangingPassword] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -122,6 +127,41 @@ export default function ProfileUpdatePage() {
     }
   }
 
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('All password fields are required')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match')
+      return
+    }
+    if (newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters')
+      return
+    }
+
+    setChangingPassword(true)
+    const tid = toast.loading('Changing password...')
+    try {
+      await authService.changePassword(currentPassword, newPassword)
+      toast.success('Password changed', {
+        id: tid,
+        description: 'Your password has been updated successfully',
+      })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (err) {
+      toast.error('Failed to change password', {
+        id: tid,
+        description: err?.response?.data?.message || 'Please try again',
+      })
+    } finally {
+      setChangingPassword(false)
+    }
+  }
+
   const goBack = () => navigate('/profile')
 
   return (
@@ -197,6 +237,63 @@ export default function ProfileUpdatePage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Change Password Section */}
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <Lock className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
+              <h3 className="font-semibold text-sm dark:text-neutral-100">Change Password</h3>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 dark:border-white/10">
+                <Lock className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500 dark:text-neutral-400">Current Password</div>
+                  <Input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    className="mt-1 h-9 rounded-lg dark:text-neutral-100 dark:placeholder:text-neutral-400 dark:border-white/10"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 dark:border-white/10">
+                <Lock className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500 dark:text-neutral-400">New Password</div>
+                  <Input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    className="mt-1 h-9 rounded-lg dark:text-neutral-100 dark:placeholder:text-neutral-400 dark:border-white/10"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 dark:border-white/10">
+                <Lock className="h-4 w-4 text-gray-600 dark:text-neutral-300" />
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500 dark:text-neutral-400">Confirm New Password</div>
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="mt-1 h-9 rounded-lg dark:text-neutral-100 dark:placeholder:text-neutral-400 dark:border-white/10"
+                  />
+                </div>
+              </div>
+            </div>
+            <Button
+              onClick={handleChangePassword}
+              className="w-full mt-3 h-10 rounded-xl border bg-black hover:bg-gray-800 text-white flex items-center justify-center gap-2"
+              disabled={changingPassword}
+            >
+              <Lock className="h-4 w-4" />
+              <span>{changingPassword ? 'Changing Password...' : 'Change Password'}</span>
+            </Button>
           </div>
 
           <div className="mt-2 flex items-center justify-between gap-3">
